@@ -1,34 +1,22 @@
 ﻿var input = new List<string>();
 
 var code = new List<(char start, char end, int price)>();
-code.Add(('(', ')', 3));
-code.Add(('[', ']', 57));
-code.Add(('{', '}', 1197));
-code.Add(('<', '>', 25137));
-
-var startingChars = new Dictionary<char, char>();
-startingChars.Add('(', ')');
-startingChars.Add('[', ']');
-startingChars.Add('{', '}');
-startingChars.Add('<', '>');
-
-var endingChars = new Dictionary<char, char>();
-endingChars.Add(')', '(');
-endingChars.Add(']', '[');
-endingChars.Add('}', '{');
-endingChars.Add('>', '<');
+code.Add(('(', ')', 1));
+code.Add(('[', ']', 2));
+code.Add(('{', '}', 3));
+code.Add(('<', '>', 4));
 
 var file = new FileInfo("input.txt");
 using (var textReader = new StreamReader(file.OpenRead()))
 {
-    var i = 0;
     while (textReader.EndOfStream == false)
     {
         input.Add(textReader.ReadLine());
     }
 }
-var sum = 0;
-var incomplete = new List<string>();
+
+var scores = new List<long>();
+var corrupted = new List<string>();
 foreach (var line in input)
 {
     var stack = new Stack<char>();
@@ -42,12 +30,25 @@ foreach (var line in input)
             var prevC = stack.Pop();
             if (code.Any(x => x.start == prevC && x.end == c) == false)
             {
-                sum += code.FirstOrDefault(x => x.end == c).price;
-                incomplete.Add(line);
+                stack.Clear();
+                corrupted.Add(line);
                 break;
             }
         }
     }
+
+    long score = 0;
+    while (stack.Count > 0)
+    {
+        var c = stack.Pop();
+        score = score * 5 + code.First(x => x.start == c).price;
+    }
+
+    if (score > 0)
+        scores.Add(score);
 }
 
-Console.WriteLine(sum.ToString());
+scores.Sort();
+var final = scores[scores.Count/2];
+
+Console.WriteLine(final);
