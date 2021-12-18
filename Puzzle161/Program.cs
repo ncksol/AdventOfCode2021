@@ -18,7 +18,7 @@ var mainPackageTypeId = GetNextChunkOfDataDec(3, ref inputBinary);
 if (mainPackageTypeId != 4)
     mainPackageResult = ProcessOperatorPacket(ref inputBinary, mainPackageTypeId);
 else
-    ProcessLiteralValuePacket(ref inputBinary);
+    mainPackageResult = ProcessLiteralValuePacket(ref inputBinary);
 
 Console.WriteLine(mainPackageResult);
 
