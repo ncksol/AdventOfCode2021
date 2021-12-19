@@ -8,77 +8,82 @@ var ySplit = split[1].Trim().Remove(0, 2).Split("..", StringSplitOptions.RemoveE
 (int Min, int Max) xTarget = (int.Parse(xSplit[0]), int.Parse(xSplit[1]));
 (int Min, int Max) yTarget = (int.Parse(ySplit[0]), int.Parse(ySplit[1]));
 
-var highestY = -1;
+var yLocations = new Dictionary<(int X, int Y), int>();
 
-var minXVelocity = CalculateMinXVelocity();
-var testYVelocity = 1;
-
-var prevTryHighestY = -1;
-
-while (true)
+for (int i = 1; i < xTarget.Max+1; i++)
 {
-    var tryHighestY = 0;
-    
-    (int X, int Y) probeVelocity = (minXVelocity, testYVelocity);
-
-    (int X, int Y) probeLocation = (0, 0);
-    var previousProbeLocation = probeLocation;
-
-    while (true)
+    var testXVelocity = i;
+    var previousHighestY = -1;
+    for (int j = yTarget.Min; j < Math.Abs(yTarget.Min); j++)
     {
-        probeLocation = (probeLocation.X + probeVelocity.X, probeLocation.Y + probeVelocity.Y);
-        if (probeLocation.X > xTarget.Max)
-        {
-            tryHighestY = -1;
+        int? tryHighestY = null;
+
+        var testYVelocity = j;
+
+        (int X, int Y) probeVelocity = (testXVelocity, testYVelocity);
+        (int X, int Y) probeLocation = (0, 0);
+
+        tryHighestY = MoveProbe(probeLocation, probeVelocity, tryHighestY);
+
+        if (tryHighestY != null)
+            yLocations.Add((testXVelocity, testYVelocity), tryHighestY.Value);
+
+        if ((tryHighestY < previousHighestY && previousHighestY > 0) || testYVelocity > 1000)
             break;
-        }
-
-        if (probeLocation.X < xTarget.Min && probeLocation.X <= previousProbeLocation.X)
-        {
-            tryHighestY = -1;
-            break;
-        }
-
-        if(probeLocation.Y < yTarget.Min && probeVelocity.Y <= 0)
-        {
-            tryHighestY = -1;
-            break;
-        }
-
-        if (probeLocation.Y > tryHighestY)
-            tryHighestY = probeLocation.Y;
-
-        if (probeLocation.X >= xTarget.Min && probeLocation.X <= xTarget.Max && probeLocation.Y >= yTarget.Min && probeLocation.Y <= yTarget.Max)
-            break;
-
-        if (probeVelocity.X > 0)
-            probeVelocity.X--;
-        else if (probeVelocity.X < 0)
-            probeVelocity.X++;
-
-        probeVelocity.Y--;
-
-        previousProbeLocation = probeLocation;
     }
-
-    if(tryHighestY > highestY)
-        highestY = tryHighestY;
-    else if(tryHighestY < prevTryHighestY && prevTryHighestY > 0 || testYVelocity > 1000)
-        break;
-
-    testYVelocity++;
 }
 
-Console.WriteLine(highestY);
+var maxYLocation = yLocations.MaxBy(x => x.Value);
+Console.WriteLine($"Highest Location: {maxYLocation.Value} at Velocity: ({maxYLocation.Key.X},{maxYLocation.Key.Y})");
+Console.WriteLine($"Total valid Velocities: {yLocations.Count}");
 
-int CalculateMinXVelocity()
+int? MoveProbe((int X, int Y) probeLocation, (int X, int Y) probeVelocity, int? highestY)
 {
-    var a = 0.5;
-    var b = 0.5;
-    var c = xTarget.Min * -1;
+    var previousProbeLocation = probeLocation;
+    probeLocation = (probeLocation.X + probeVelocity.X, probeLocation.Y + probeVelocity.Y);
 
-    var d = Math.Pow(b, 2) - 4 * a * c;
-    var x = (b * -1 + Math.Sqrt(d)) / (2 * a);
+    if(IsValidProbeLocation(probeLocation, probeVelocity, previousProbeLocation) == false)
+        return null;
 
-    return Convert.ToInt32(Math.Ceiling(x));
+    if(highestY == null || highestY.Value < probeLocation.Y)
+        highestY = probeLocation.Y;
+    
+    if (IsFinalProbeLocation(probeLocation))
+    {
+        return highestY;
+    }
+
+    if (probeVelocity.X > 0)
+        probeVelocity.X--;
+    else if (probeVelocity.X < 0)
+        probeVelocity.X++;
+
+    probeVelocity.Y--;
+
+    return MoveProbe(probeLocation, probeVelocity, highestY);
+}
+
+bool IsValidProbeLocation((int X, int Y) probeLocation, (int X, int Y) probeVelocity, (int X, int Y) previousProbeLocation)
+{
+    if (probeLocation.X > xTarget.Max)
+    {
+        return false;
+    }
+
+    if (probeLocation.X < xTarget.Min && probeLocation.X <= previousProbeLocation.X)
+    {
+        return false;
+    }
+
+    if (probeLocation.Y < yTarget.Min && probeVelocity.Y <= 0)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool IsFinalProbeLocation((int X, int Y) probeLocation)
+{
+    return probeLocation.X >= xTarget.Min && probeLocation.X <= xTarget.Max && probeLocation.Y >= yTarget.Min && probeLocation.Y <= yTarget.Max;
 }
