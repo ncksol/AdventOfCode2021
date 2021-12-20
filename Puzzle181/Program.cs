@@ -1,59 +1,124 @@
 ﻿var input = File.ReadAllLines("input.txt");
-
 //input = new string[] {"[1,1]", "[2,2]", "[3,3]", "[4,4]", "[5,5]"};
 
-var inputArray = input.First().Select(x => Convert.ToString(x)).ToList();
+var isNumberTwo = true;
 
-foreach (var line in input.Skip(1))
+if(isNumberTwo == false)
+    NumberOne();
+else
+    NumberTwo();
+
+void NumberOne()
 {
-    var i = 0;
-    var leftNumberIndex = -1;
-    var openBracketCount = 0;
-    var splitNumberIndex = -1;
+    var inputArray = input.First().Select(x => Convert.ToString(x)).ToList();
 
-    inputArray = Addition(inputArray, line.Select(x => Convert.ToString(x)).ToList());
-    while (i < inputArray.Count)
+    foreach (var line in input.Skip(1))
     {
-        int number = int.MinValue;
-        var c = inputArray[i];
-        if (c == "[")
-            openBracketCount++;
-        else if (int.TryParse(c, out number))
-            leftNumberIndex = i;
-        else if (c == "]")
-            openBracketCount--;
+        var i = 0;
+        var leftNumberIndex = -1;
+        var openBracketCount = 0;
+        var splitNumberIndex = -1;
 
-        if (openBracketCount >= 5 && inputArray[i + 4] == "]")
+        inputArray = Addition(inputArray, line.Select(x => Convert.ToString(x)).ToList());
+        while (i < inputArray.Count)
         {
-            Explode(inputArray, i + 1, leftNumberIndex);
-            i = 0;
-            openBracketCount = 0;
-            leftNumberIndex = -1;
-            splitNumberIndex = -1;
-            continue;
-        }
-        else if(splitNumberIndex == -1 && int.TryParse(c, out var v) && v >= 10)
-        {
-            splitNumberIndex = i;
-        }
+            int number = int.MinValue;
+            var c = inputArray[i];
+            if (c == "[")
+                openBracketCount++;
+            else if (int.TryParse(c, out number))
+                leftNumberIndex = i;
+            else if (c == "]")
+                openBracketCount--;
 
-        i++;
+            if (openBracketCount >= 5 && inputArray[i + 4] == "]")
+            {
+                Explode(inputArray, i + 1, leftNumberIndex);
+                i = 0;
+                openBracketCount = 0;
+                leftNumberIndex = -1;
+                splitNumberIndex = -1;
+                continue;
+            }
+            else if (splitNumberIndex == -1 && int.TryParse(c, out var v) && v >= 10)
+            {
+                splitNumberIndex = i;
+            }
 
-        if (i == inputArray.Count - 1 && splitNumberIndex != -1)
-        {
-            Split(inputArray, splitNumberIndex);
-            i = 0;
-            openBracketCount = 0;
-            leftNumberIndex = -1;
-            splitNumberIndex = -1;
+            i++;
+
+            if (i == inputArray.Count - 1 && splitNumberIndex != -1)
+            {
+                Split(inputArray, splitNumberIndex);
+                i = 0;
+                openBracketCount = 0;
+                leftNumberIndex = -1;
+                splitNumberIndex = -1;
+            }
         }
     }
+
+    Console.WriteLine(String.Join(null, inputArray));
+    Console.WriteLine(Magnitude(inputArray));
+
 }
 
-Console.WriteLine(String.Join(null, inputArray));
-Console.WriteLine(Magnitue(inputArray));
+void NumberTwo()
+{
+    var maxMagnitude = int.MinValue;
+    var pairs = Recombine(input);
 
+    foreach (var item in pairs)
+    {
+        var i = 0;
+        var leftNumberIndex = -1;
+        var openBracketCount = 0;
+        var splitNumberIndex = -1;
 
+        var inputArray = Addition(item.Number1, item.Number2);
+        while (i < inputArray.Count)
+        {
+            int number = int.MinValue;
+            var c = inputArray[i];
+            if (c == "[")
+                openBracketCount++;
+            else if (int.TryParse(c, out number))
+                leftNumberIndex = i;
+            else if (c == "]")
+                openBracketCount--;
+
+            if (openBracketCount >= 5 && inputArray[i + 4] == "]")
+            {
+                Explode(inputArray, i + 1, leftNumberIndex);
+                i = 0;
+                openBracketCount = 0;
+                leftNumberIndex = -1;
+                splitNumberIndex = -1;
+                continue;
+            }
+            else if (splitNumberIndex == -1 && int.TryParse(c, out var v) && v >= 10)
+            {
+                splitNumberIndex = i;
+            }
+
+            i++;
+
+            if (i == inputArray.Count - 1 && splitNumberIndex != -1)
+            {
+                Split(inputArray, splitNumberIndex);
+                i = 0;
+                openBracketCount = 0;
+                leftNumberIndex = -1;
+                splitNumberIndex = -1;
+            }
+        }
+
+        var magnitude = Magnitude(inputArray);
+        if(magnitude > maxMagnitude) maxMagnitude = magnitude;
+    }
+
+    Console.WriteLine(maxMagnitude);
+}
 
 void Explode(List<string> inputArray, int explodeIndex, int leftNumberIndex)
 {
@@ -112,7 +177,7 @@ List<string> Addition(List<string> number1, List<string> number2)
     return result;
 }
 
-string Magnitue(List<string> number)
+int Magnitude(List<string> number)
 {
     var i = 0;
     while (i < number.Count && number.Count != 1)
@@ -131,5 +196,22 @@ string Magnitue(List<string> number)
         else i++;
     }
 
-    return number.First();
+    return int.Parse(number.First());
+}
+
+List<(List<string> Number1, List<string> Number2)> Recombine(string[] list)
+{
+    var result = new List<(List<string> Number1, List<string> Number2)>();
+
+    for (int i = 0; i < list.Length; i++)
+    {
+        for (int j = 0; j < list.Length; j++)
+        {
+            if(i == j) continue;
+
+            result.Add((list[i].Select(x => Convert.ToString(x)).ToList(), list[j].Select(x => Convert.ToString(x)).ToList()));
+        }
+    }
+
+    return result;
 }
