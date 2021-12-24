@@ -1,0 +1,61 @@
+﻿<Window x:Class="Puzzle231UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Puzzle231UI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="30" />
+      <RowDefinition Height="30" />
+      <RowDefinition Height="30" />
+      <RowDefinition Height="50" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="30" />
+      <ColumnDefinition Width="30" />
+      <ColumnDefinition Width="30" />
+      <ColumnDefinition Width="30" />
+      <ColumnDefinition Width="30" />
+      <ColumnDefinition Width="30" />
+      <ColumnDefinition Width="30" />
+      <ColumnDefinition Width="30" />
+      <ColumnDefinition Width="30" />
+      <ColumnDefinition Width="30" />
+      <ColumnDefinition Width="30" />
+    </Grid.ColumnDefinitions>
+
+    <Button Grid.Row="0" Grid.Column="0" x:Name="Hallway0" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="0" Grid.Column="1" x:Name="Hallway1" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="0" Grid.Column="2" x:Name="Hallway2" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="0" Grid.Column="3" x:Name="Hallway3" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="0" Grid.Column="4" x:Name="Hallway4" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="0" Grid.Column="5" x:Name="Hallway5" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="0" Grid.Column="6" x:Name="Hallway6" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="0" Grid.Column="7" x:Name="Hallway7" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="0" Grid.Column="8" x:Name="Hallway8" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="0" Grid.Column="9" x:Name="Hallway9" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="0" Grid.Column="10" x:Name="Hallway10" Click="Button_Click" Background="Transparent"/>
+
+    <Button Grid.Row="1" Grid.Column="2" x:Name="Room00" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="1" Grid.Column="4" x:Name="Room01" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="1" Grid.Column="6" x:Name="Room02" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="1" Grid.Column="8" x:Name="Room03" Click="Button_Click" Background="Transparent" />
+
+    <Button Grid.Row="2" Grid.Column="2" x:Name="Room10" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="2" Grid.Column="4" x:Name="Room11" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="2" Grid.Column="6" x:Name="Room12" Click="Button_Click" Background="Transparent" />
+    <Button Grid.Row="2" Grid.Column="8" x:Name="Room13" Click="Button_Click" Background="Transparent" />
+
+    <TextBlock Grid.Row="4" Grid.ColumnSpan="11">
+      <Run Text="Total Energy: "/><Run x:Name="TotalEnergy" />
+    </TextBlock>
+
+    <Button Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="2" Content="Undo" x:Name="Undo" Click="Undo_Click" />
+    <Button Grid.Row="4" Grid.Column="7" Grid.ColumnSpan="2" Content="Reset" x:Name="Reset" Click="Reset_Click" />
+  </Grid>
+</Window>
